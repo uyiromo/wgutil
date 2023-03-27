@@ -13,8 +13,10 @@ PEER_PUBLICKEY=$PEERDIR/publickey
 PEER_PRESHAREDKEY=$PEERDIR/presharedkey
 
 PEERCONF=$PEERDIR/peer.conf
+PEERCONF_QRIMG=$PEERDIR/peer.conf.png
 
 # Generate the peer-side keys
+mkdir -p $PEERDIR
 genkeys $PEER_PRIVATEKEY $PEER_PUBLICKEY $PEER_PRESHAREDKEY
 
 
@@ -51,3 +53,8 @@ id=$(( $id + 1 ))
 echo $id > $PEERS_DB
 
 qrencode -t ansiutf8 -r $PEERCONF
+qrencode -t png -r $PEERCONF -o $PEERCONF_QRIMG
+
+
+# notification
+python3 ./smtp.py "wgutil: New WireGuard Peer ($peer_ip)" $PEERCONF $PEERCONF_QRIMG
